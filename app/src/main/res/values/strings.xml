@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">CondorTestApp</string>
+    <string name="loading_msg">Загрузка…</string>
+    <string name="error_field_empty">Пожалуйста, заполните поле</string>
+    <string name="error_login_invalid_email">Пожалуйста, введите правильный электронный адрес</string>
+    <string name="error_login_invalid_password">Неверный пароль</string>
+    <string name="logo">как бы лого</string>
+    <string name="login_hint_username">Логин</string>
+    <string name="login_hint_password">Пароль</string>
+    <string name="login_btn">Войти</string>
+    <string name="pic">just pic</string>
+    <string name="no_more_data">нет данных</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAZK_SWxWmIK_jSl1E6qEGrAMUI10hXj9c</string>
+</resources>

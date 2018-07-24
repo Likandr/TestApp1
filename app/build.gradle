@@ -1,0 +1,101 @@
+apply plugin: 'com.android.application'
+
+//region Version information
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 0
+//endregion
+
+android {
+    compileSdkVersion build_versions.target_sdk
+    buildToolsVersion build_versions.build_tools
+    defaultConfig {
+        applicationId "com.likandr.condortestapp"
+        minSdkVersion 21
+        targetSdkVersion 28
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+
+        versionCode versionMajor * 1000000 + versionMinor * 1000 + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            versionNameSuffix = rootProject.PACKAGE_NAME_DEV_SUFFIX
+
+            shrinkResources false
+            minifyEnabled false
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "LOG", "true"
+        }
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "LOG", "false"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    //region Support libraries
+    implementation deps.support.appcompat
+    implementation deps.support.v4
+    implementation deps.support.support_annotations
+    implementation deps.support.design
+    implementation deps.support.percent
+    implementation deps.support.recyclerview
+    implementation deps.support.cardview
+    implementation deps.support.palette
+    implementation deps.support.constraint_layout
+    implementation deps.support.google_maps
+    implementation deps.support.google_location
+    //endregion
+
+    //region ButterKnife
+    implementation (deps.butterknife.runtime) {
+        exclude module: 'support-annotations'
+    }
+    annotationProcessor deps.butterknife.compiler
+    //endregion
+
+    //region Dagger2
+    implementation deps.dagger.runtime
+    annotationProcessor deps.dagger.compiler
+    //testAnnotationProcessor deps.dagger.compiler
+    //endregion
+
+    //region Rx
+    implementation deps.rx_android
+    implementation deps.rx_java
+    //endregion
+
+    //region OkHttp
+    implementation deps.okhttp.runtime
+    implementation deps.okhttp.logging_interceptor
+    implementation deps.okhttp.okhttp_urlconnection
+    //endregion
+
+    //region Retrofit
+    implementation deps.retrofit.runtime
+    implementation deps.retrofit.gson
+    implementation deps.retrofit.adapter_rxjava
+    implementation deps.retrofit.converter_scalars
+    //endregion
+
+    //region Diff
+    compileOnly deps.annotation
+    implementation deps.greenrobotutils
+    implementation deps.gson
+    implementation deps.picasso
+    implementation deps.jetbrains_annotations
+    //endregion
+}
+
