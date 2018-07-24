@@ -143,6 +143,7 @@ public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View,
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView");
         hideLoading();
+        if (rvData != null) rvData.setAdapter(null);
         super.onDestroyView();
     }
 
