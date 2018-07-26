@@ -2,10 +2,8 @@ package com.likandr.condortestapp._common.base;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +14,14 @@ import java.lang.annotation.Annotation;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 public abstract class BaseFragment extends Fragment implements BaseView {
 
     private Unbinder mUnbinder;
+    public PublishSubject<FragmentParams> changeFragmentSubject = PublishSubject.create();
+
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,13 +67,7 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     public abstract void getArgs(Bundle _bundle);
     public abstract void setUpToolbar();
 
-    public interface OnShowMessageListener {
-        void onShowMessage(String message);
-    }
-
-    public interface OnChangeFragment {
-        void onChangeFragment(String fragmentTag,
-                              Bundle args,
-                              @Nullable Pair<View, String> sharedElement);
+    public Observable<FragmentParams> changeFragment() {
+        return changeFragmentSubject;
     }
 }

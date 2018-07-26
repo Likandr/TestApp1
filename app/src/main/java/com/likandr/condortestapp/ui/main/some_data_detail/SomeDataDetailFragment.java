@@ -38,7 +38,6 @@ public class SomeDataDetailFragment extends BaseFragment implements SomeDataDeta
     MainComponent component;
     @Inject SomeDataDetailPresenter presenter;
 
-    OnChangeFragment onChangeFragment;
     private GoogleMap mMap;
     private String mId, mName, mCountry;
     private Double mLat, mLon;
@@ -141,12 +140,6 @@ public class SomeDataDetailFragment extends BaseFragment implements SomeDataDeta
         this.injectDependencies();
         this.attachToPresenter();
         super.onAttach(context);
-        if (context instanceof OnChangeFragment) {
-            onChangeFragment = (OnChangeFragment) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnChangeFragment");
-        }
     }
 
     @Override public void onDetach() {

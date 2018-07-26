@@ -2,7 +2,6 @@ package com.likandr.condortestapp.ui.main.some_data.view;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +15,9 @@ import com.likandr.condortestapp.data._models.SomeData;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+
 public class SomeDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int REGULAR_ITEM = 1;
     private final int FOOTER_ITEM = 0;
@@ -25,16 +27,13 @@ public class SomeDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final LayoutInflater inflater;
 
     private Handler mHandler;
-    @Nullable private OnClickListener mOnClickListener;
+    private PublishSubject<SomeData> clickSubject = PublishSubject.create();
+
 
     public SomeDataAdapter(FragmentActivity context) {
         mHandler = context.getWindow().getDecorView().getHandler();
         if (mHandler == null) mHandler = new Handler();
         inflater = LayoutInflater.from(context);
-    }
-
-    public void setOnClickListener(@Nullable OnClickListener onClickListener) {
-        this.mOnClickListener = onClickListener;
     }
 
     public static class SomeDataHolder extends RecyclerView.ViewHolder {
@@ -78,13 +77,15 @@ public class SomeDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (holder instanceof SomeDataHolder){
             ((SomeDataHolder)holder).bindTo(mDataset.get(position));
             ((SomeDataHolder)holder).itemView.setOnClickListener(v -> {
-                if (mOnClickListener != null) {
-                    mOnClickListener.onItemClicked(mDataset.get(position));
-                }
+                clickSubject.onNext(mDataset.get(position));
             });
         } else {
             ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
         }
+    }
+
+    Observable<SomeData> onItemClicked() {
+        return clickSubject;
     }
 
     @Override public int getItemCount() {
@@ -110,9 +111,5 @@ public class SomeDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void removeProgress() {
         mDataset.remove(getItemCount() - 1);
         mHandler.post(() -> notifyItemRemoved(getItemCount()));
-    }
-
-    public interface OnClickListener {
-        void onItemClicked(SomeData someData);
     }
 }

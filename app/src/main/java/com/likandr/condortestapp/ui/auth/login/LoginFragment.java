@@ -15,6 +15,7 @@ import com.likandr.condortestapp.R;
 import com.likandr.condortestapp._common.App;
 import com.likandr.condortestapp._common.base.BaseFragment;
 import com.likandr.condortestapp._common.misc.Layout;
+import com.likandr.condortestapp._common.pref.PrefUtil;
 import com.likandr.condortestapp.ui.auth.AuthActivity;
 import com.likandr.condortestapp.ui.auth._di.AuthComponent;
 import com.likandr.condortestapp.ui.auth._di.AuthModule;
@@ -33,8 +34,6 @@ public class LoginFragment extends BaseFragment implements LoginMVP.View {
 
     AuthComponent component;
     @Inject LoginPresenter presenter;
-
-    OnChangeFragment onChangeFragment;
 
     private ProgressDialog progressDialog = null;
 
@@ -93,7 +92,7 @@ public class LoginFragment extends BaseFragment implements LoginMVP.View {
     }
 
     @Override public void beginWith() {
-//        if (PrefUtil.isCode()) MainActivity.startMe(getContext());
+        if (PrefUtil.isCode()) MainActivity.startMe(getContext());
     }
 
     @Override public void onAttach(Context context) {
@@ -101,12 +100,6 @@ public class LoginFragment extends BaseFragment implements LoginMVP.View {
         this.injectDependencies();
         this.attachToPresenter();
         super.onAttach(context);
-        if (context instanceof OnChangeFragment) {
-            onChangeFragment = (OnChangeFragment) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnChangeFragment");
-        }
     }
 
     @Override public void onDetach() {

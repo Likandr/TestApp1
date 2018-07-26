@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.likandr.condortestapp.R;
 import com.likandr.condortestapp._common.App;
 import com.likandr.condortestapp._common.base.BaseFragment;
+import com.likandr.condortestapp._common.base.FragmentParams;
 import com.likandr.condortestapp._common.misc.EndlessRecyclerOnScrollListener;
 import com.likandr.condortestapp._common.misc.Layout;
 import com.likandr.condortestapp._common.pref.PrefUtil;
@@ -32,23 +33,22 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 
 @Layout(id = R.layout.fragment_some_data)
-public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View,
-        SomeDataAdapter.OnClickListener {
+public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View{
 
     public static final String TAG = SomeDataFragment.class.getSimpleName();
 
     MainComponent component;
     @Inject SomeDataPresenter presenter;
 
-    OnChangeFragment onChangeFragment;
-
     @BindView(R.id.progress) ProgressBar pbData;
     @BindView(R.id.rv_data) RecyclerView rvData;
 
     private SomeDataAdapter mAdapter;
     private int pageNumber = 1;
+    private Disposable d;
 
     @Override public void setUpToolbar() {
         MainActivity activity = (MainActivity) getActivity();
@@ -108,7 +108,8 @@ public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View,
     public void fillViews() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mAdapter = new SomeDataAdapter(getFragmentActivity());
-        mAdapter.setOnClickListener(this);
+        d = mAdapter.onItemClicked().subscribe(this::goDetail);
+
         rvData.setHasFixedSize(true);
         rvData.setLayoutManager(layoutManager);
         rvData.setAdapter(mAdapter);
@@ -126,12 +127,6 @@ public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View,
         this.injectDependencies();
         this.attachToPresenter();
         super.onAttach(context);
-        if (context instanceof OnChangeFragment) {
-            onChangeFragment = (OnChangeFragment) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnChangeFragment");
-        }
     }
 
     @Override public void onDetach() {
@@ -143,6 +138,7 @@ public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View,
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView");
         hideLoading();
+        if (d != null) d.dispose();
         if (rvData != null) rvData.setAdapter(null);
         super.onDestroyView();
     }
@@ -175,7 +171,7 @@ public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View,
         e.printStackTrace();
     }
 
-    @Override public void onItemClicked(SomeData someData) {
+    private void goDetail(SomeData someData) {
         Bundle args = new Bundle();
         args.putString(MainActivity.ARGUMENT_ID, someData.getId());
         args.putString(MainActivity.ARGUMENT_NAME, someData.getName());
@@ -183,6 +179,7 @@ public class SomeDataFragment extends BaseFragment implements SomeDataMVP.View,
         args.putDouble(MainActivity.ARGUMENT_LAT, someData.getLat());
         args.putDouble(MainActivity.ARGUMENT_LON, someData.getLon());
 
-        onChangeFragment.onChangeFragment(SomeDataDetailFragment.TAG, args, null);
+        FragmentParams fp = new FragmentParams(SomeDataDetailFragment.TAG, args, null);
+        changeFragmentSubject.onNext(fp);
     }
 }
